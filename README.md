@@ -2,7 +2,7 @@
 Codes used to perform a simulation study in 
 
 >
-> Xin, J. and Ma, W. (2024+) On the achievability of efficiency bounds for covariate-adjusted response-adaptive randomization.
+> Xin, J., & Ma, W. (2025). On the achievability of efficiency bounds for covariate-adjusted response-adaptive randomization. *Statistical Methods in Medical Research*, 09622802251327689.
 
 The repository includes the R and C++ code used to produce the presented results in the manuscript and supplementary material. 
 
