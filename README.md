@@ -6,6 +6,27 @@ Codes used to perform a simulation study in
 
 The repository includes the R and C++ code used to produce the presented results in the manuscript and supplementary material.
 
+## 🚀 Standalone Plumber API (NEW!)
+
+**A pure R implementation of the CARA API is now available!**
+
+The standalone API provides all CARA functionality **without C++ dependencies**, making it easy to deploy in any environment. Perfect for:
+- Production clinical trials
+- Cloud deployment (AWS, Azure, Google Cloud)
+- Docker containers
+- Environments without C++ compilers
+
+**Quick Start:**
+```r
+# Install only 2 R packages - no C++ needed!
+install.packages(c("plumber", "jsonlite"))
+
+# Start the API server
+Rscript start_api_standalone.R
+```
+
+**See [README_STANDALONE.md](README_STANDALONE.md) for complete documentation.**
+
 ## 📖 Complete Documentation
 
 **For a comprehensive explanation of the complete working module, see [MODULE_DOCUMENTATION.md](MODULE_DOCUMENTATION.md)**
@@ -19,15 +40,30 @@ The documentation includes:
 
 ## File folder description
 
-`base_randomization.cpp` contains C++ code to perform randomization methods. `simulatoin.R` contains R code to generate simulation models and results.
+### Core Research Files
+- `base_randomization.cpp` - C++ code for high-performance randomization methods
+- `simulation.R` - R code to generate simulation models and results
+- `codes.Rmd` - Replication code for manuscript results
+- `codes.pdf` - Output file with all results
 
-Replication code is contained in `codes.Rmd` and the output file is `codes.pdf`. 
+### Standalone API Files (Pure R)
+- `randomization_r.R` - Pure R implementations of all algorithms (no C++)
+- `plumber_api_standalone.R` - Standalone REST API endpoints
+- `start_api_standalone.R` - Server startup script
+- `example_client_standalone.R` - Complete usage example
+- `README_STANDALONE.md` - Standalone API documentation
 
+### Original API Files (R + C++)
+- `plumber_api.R` - Original REST API (requires C++)
+- `start_api.R` - Original server startup script
+- `example_client.R` - Original usage example
 
 ## Dependencies
 
-* R packages: 
+### For Standalone API (Recommended for Production)
+* R packages: **plumber, jsonlite**
 
-parallel, Rcpp, RcppArmadillo, ggplot2, tidyr, dplyr, patchwork, latex2exp
+### For Research/Simulations (Original)
+* R packages: parallel, Rcpp, RcppArmadillo, ggplot2, tidyr, dplyr, patchwork, latex2exp
 
 For detailed installation and usage instructions, see [MODULE_DOCUMENTATION.md](MODULE_DOCUMENTATION.md).

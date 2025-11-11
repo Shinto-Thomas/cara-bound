@@ -1,0 +1,64 @@
+#!/usr/bin/env Rscript
+
+# CARA Randomization API Server Launcher - Standalone R Version
+# This script starts the Plumber API server for CARA randomization
+# using pure R implementations (no C++ dependencies)
+
+cat("========================================\n")
+cat("CARA Randomization API Server\n")
+cat("Standalone R Version (No C++)\n")
+cat("========================================\n\n")
+
+# Check if required packages are installed
+required_packages <- c("plumber", "jsonlite")
+missing_packages <- required_packages[!(required_packages %in% installed.packages()[,"Package"])]
+
+if (length(missing_packages) > 0) {
+  cat("ERROR: Missing required packages:\n")
+  cat(paste("-", missing_packages, collapse = "\n"), "\n\n")
+  cat("Please install them using:\n")
+  cat("install.packages(c(", paste0('"', missing_packages, '"', collapse = ", "), "))\n\n")
+  quit(status = 1)
+}
+
+# Load required libraries
+suppressPackageStartupMessages({
+  library(plumber)
+  library(jsonlite)
+})
+
+cat("Loading R randomization functions...\n")
+tryCatch({
+  source("randomization_r.R")
+  cat("✓ R functions loaded successfully\n")
+}, error = function(e) {
+  cat("✗ Error loading randomization_r.R:\n")
+  cat(e$message, "\n")
+  quit(status = 1)
+})
+
+cat("\nStarting API server...\n")
+
+# Create plumber instance
+pr <- plumb("plumber_api_standalone.R")
+
+# Configure port (default 8000, can be overridden by environment variable)
+port <- as.integer(Sys.getenv("PORT", "8000"))
+host <- Sys.getenv("HOST", "0.0.0.0")
+
+cat("\n========================================\n")
+cat("Server Configuration:\n")
+cat(paste("- Host:", host, "\n"))
+cat(paste("- Port:", port, "\n"))
+cat("- Implementation: Pure R (no C++)\n")
+cat("========================================\n\n")
+
+cat("API Endpoints:\n")
+cat(paste0("- Health Check:      http://localhost:", port, "/health\n"))
+cat(paste0("- API Documentation: http://localhost:", port, "/__docs__/\n"))
+cat(paste0("- Swagger UI:        http://localhost:", port, "/__swagger__/\n\n"))
+
+cat("Press Ctrl+C to stop the server\n\n")
+
+# Run the API
+pr$run(port = port, host = host)
