@@ -1,0 +1,144 @@
+CARA STANDALONE API - QUICK START
+==================================
+
+🎯 GOAL: Run CARA randomization API without C++ dependencies
+
+📦 INSTALLATION (2 packages only!)
+-----------------------------------
+R -e "install.packages(c('plumber', 'jsonlite'))"
+
+🚀 START SERVER
+----------------
+Rscript start_api_standalone.R
+
+The API will be available at http://localhost:8000
+
+📖 DOCUMENTATION
+-----------------
+- Main docs: README_STANDALONE.md
+- API reference: API_DOCUMENTATION.md  
+- Migration: MIGRATION_GUIDE.md
+- Verification: VERIFICATION.md
+
+✅ VERIFY IT WORKS
+-------------------
+# In another terminal:
+curl http://localhost:8000/health
+
+Expected response:
+{
+  "status": "healthy",
+  "version": "1.0.0-standalone-r",
+  "implementation": "Pure R (no C++ dependencies)"
+}
+
+🧪 RUN EXAMPLES
+----------------
+# Full workflow example (50 patients):
+Rscript example_client_standalone.R
+
+# Validation tests:
+Rscript test_standalone.R
+
+🐳 DOCKER DEPLOYMENT
+---------------------
+# Create Dockerfile:
+FROM r-base:latest
+RUN R -e "install.packages(c('plumber', 'jsonlite'))"
+WORKDIR /app
+COPY randomization_r.R plumber_api_standalone.R start_api_standalone.R ./
+EXPOSE 8000
+CMD ["Rscript", "start_api_standalone.R"]
+
+# Build and run:
+docker build -t cara-api .
+docker run -p 8000:8000 cara-api
+
+📚 API ENDPOINTS
+-----------------
+GET  /health                      - Health check
+POST /trial/initialize            - Initialize trial
+GET  /trial/status                - Get trial status
+POST /patient/enroll              - Enroll patient
+POST /patient/outcome             - Record outcome
+GET  /patients/list               - List all patients
+GET  /analysis/treatment-effect   - Get treatment effect
+GET  /analysis/allocation-stats   - Get allocation stats
+GET  /data/export                 - Export trial data
+
+💡 EXAMPLE USAGE (curl)
+------------------------
+# Initialize trial
+curl -X POST http://localhost:8000/trial/initialize \
+  -H "Content-Type: application/json" \
+  -d '{"study_name": "My-Trial", "n0": 10, "target": "Neyman"}'
+
+# Enroll patient
+curl -X POST http://localhost:8000/patient/enroll \
+  -H "Content-Type: application/json" \
+  -d '{"patient_id": 1, "stratum": 2}'
+
+# Record outcome
+curl -X POST http://localhost:8000/patient/outcome \
+  -H "Content-Type: application/json" \
+  -d '{"patient_id": 1, "outcome": 22.5}'
+
+# Get treatment effect
+curl http://localhost:8000/analysis/treatment-effect
+
+📝 FILES YOU NEED
+------------------
+Required files:
+- randomization_r.R              (Core R implementations)
+- plumber_api_standalone.R       (REST API)
+- start_api_standalone.R         (Startup script)
+
+Optional files:
+- example_client_standalone.R    (Usage example)
+- test_standalone.R              (Validation tests)
+
+📊 WHAT'S DIFFERENT FROM C++ VERSION
+--------------------------------------
+✅ No C++ compilation required
+✅ Only 2 R packages (vs 7)
+✅ Easier deployment
+✅ Same functionality
+✅ Same API endpoints
+✅ Slightly slower (~2x) but negligible for clinical trials
+
+⚙️ CONFIGURATION
+-----------------
+Environment variables:
+- PORT=8000        (default: 8000)
+- HOST=0.0.0.0     (default: 0.0.0.0)
+
+Trial parameters:
+- study_name       (trial identifier)
+- n0               (burn-in size, default: 10)
+- gamma            (adaptation parameter, default: 2)
+- target           (allocation: Neyman, RSIHR, BandBis, New)
+- TB               (threshold, default: 1)
+
+🔍 TROUBLESHOOTING
+-------------------
+Problem: Port already in use
+Solution: PORT=8080 Rscript start_api_standalone.R
+
+Problem: Cannot find randomization_r.R
+Solution: cd /path/to/cara-bound && Rscript start_api_standalone.R
+
+Problem: Package not installed
+Solution: R -e "install.packages(c('plumber', 'jsonlite'))"
+
+📞 SUPPORT
+-----------
+- Issues: https://github.com/Shinto-Thomas/cara-bound/issues
+- Documentation: See README_STANDALONE.md
+- Examples: See example_client_standalone.R
+
+🎉 THAT'S IT!
+--------------
+You now have a production-ready CARA randomization API 
+running with pure R (no C++ dependencies).
+
+For more details, see README_STANDALONE.md
